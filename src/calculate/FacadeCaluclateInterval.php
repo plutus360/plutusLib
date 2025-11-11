@@ -110,6 +110,10 @@ final class FacadeCaluclateInterval
         return self::$caluctor->assigneDevices($deviceDto , $userToken);
     }
 
+    function unassigneDevices(DeviceDto $deviceDto , $userToken) : array {
+        return self::$caluctor->unassigneDevices($deviceDto , $userToken);
+    }
+
     function addCalcs($userToken) : array {
         // $GLOBALS["calculators"]
         $jsonString = file_get_contents($GLOBALS["calculators"]);
