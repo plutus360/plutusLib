@@ -197,31 +197,39 @@ final class CalculateInterval  implements CalculateIntervalInterface
             array_push($filters  , $mileage) ;
         break;
 
-        case 'quantity':
-          # code...
-          try {
-            $qte = $filter_List["quantity"];
+        // case 'quantity':
+        //   # code...
+        //   try {
+        //     $qte = $filter_List["quantity"];
           
-            // $min = str_replace("X" , $min , "distance >= X") ;
-            // $max = str_replace("X" , $max , "distance <= X") ;
+        //     // $min = str_replace("X" , $min , "distance >= X") ;
+        //     // $max = str_replace("X" , $max , "distance <= X") ;
 
-            $qte = "if( ".$qte ."<= fuel_used"." , true , error() )" ;
+        //     $qte = "if( ".$qte ."<= fuel_used"." , true , error() )" ;
 
-          } catch (\Throwable $th) {
-          }
-          array_push($filters  , $qte) ;
-        break;
+        //   } catch (\Throwable $th) {
+        //   }
+        //   array_push($filters  , $qte) ;
+        // break;
 
         case 'vehicle_is_stationary':
           # code...
           try {
-            $vehicle_is_stationary = $filter_List["vehicle_is_stationary"] == "true" ? 0 : true;
-
-            $vehicle_stationary = "if( "."movement == ".$vehicle_is_stationary." , true , error() )" ;
+            // If vehicle_is_stationary is "true", we want stationary (movement == 0 or null)
+            // If vehicle_is_stationary is "false", we want moving (movement == true/1)
+            
+            if ($filter_List["vehicle_is_stationary"] == "true") {
+              // Want stationary: movement == 0 OR movement == null (null treated as false/stationary)
+              $vehicle_stationary = "if( (movement == 0 || movement == null) , true , error() )";
+            } else {
+              // Want moving: movement == true/1 (exclude null and 0)
+              $vehicle_stationary = "if( movement == true , true , error() )";
+            }
 
           } catch (\Throwable $th) {
+            
           }
-          array_push($filters  , $vehicle_stationary) ;
+          array_push($filters, $vehicle_stationary);
         break;
 
         case 'ignition_is_off':
